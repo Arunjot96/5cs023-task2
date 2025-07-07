@@ -15,14 +15,26 @@ if ($mysqli->connect_errno) {
     exit();
 }
 
-// Build SQL query
-$sql = "SELECT * FROM movies";
-
-// Check if search submitted
+// Get search inputs
 $searchTitle = "";
+$searchGenre = "";
+$searchPrice = "";
+
+$sql = "SELECT * FROM movies WHERE 1=1";
+
 if (isset($_POST['searchTitle']) && !empty($_POST['searchTitle'])) {
     $searchTitle = $mysqli->real_escape_string($_POST['searchTitle']);
-    $sql .= " WHERE Movie_name LIKE '%$searchTitle%'";
+    $sql .= " AND Movie_name LIKE '%$searchTitle%'";
+}
+
+if (isset($_POST['searchGenre']) && !empty($_POST['searchGenre'])) {
+    $searchGenre = $mysqli->real_escape_string($_POST['searchGenre']);
+    $sql .= " AND Genre LIKE '%$searchGenre%'";
+}
+
+if (isset($_POST['searchPrice']) && !empty($_POST['searchPrice'])) {
+    $searchPrice = $mysqli->real_escape_string($_POST['searchPrice']);
+    $sql .= " AND Price <= '$searchPrice'";
 }
 
 $result = $mysqli->query($sql);
@@ -36,7 +48,7 @@ if (!$result) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Movies</title>
+    <title>Movies - Task 2</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -51,11 +63,21 @@ if (!$result) {
 
     <h1>Movies List</h1>
 
-    <!-- Search form -->
+    <!-- SEARCH FORM -->
     <form method="post" class="mb-3">
-        <label for="searchTitle">Search by title:</label>
-        <input type="text" name="searchTitle" id="searchTitle" value="<?php echo htmlspecialchars($searchTitle); ?>" class="form-control" placeholder="Enter movie title">
-        <button type="submit" class="btn btn-primary mt-2">Search</button>
+        <div class="mb-3">
+            <label for="searchTitle" class="form-label">Search by Title:</label>
+            <input type="text" name="searchTitle" id="searchTitle" value="<?php echo htmlspecialchars($searchTitle); ?>" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="searchGenre" class="form-label">Search by Genre:</label>
+            <input type="text" name="searchGenre" id="searchGenre" value="<?php echo htmlspecialchars($searchGenre); ?>" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="searchPrice" class="form-label">Search by Max Price:</label>
+            <input type="number" step="0.01" name="searchPrice" id="searchPrice" value="<?php echo htmlspecialchars($searchPrice); ?>" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
     </form>
 
     <table class="table table-striped">
