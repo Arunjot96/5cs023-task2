@@ -1,25 +1,25 @@
 <?php
 session_start();
 
-// Count visits this session
-if (isset($_SESSION['visits'])) {
-    $_SESSION['visits']++;
-} else {
+// Visit counter
+if (!isset($_SESSION['visits'])) {
     $_SESSION['visits'] = 1;
+} else {
+    $_SESSION['visits']++;
 }
 
-// Connect to DB
+// Connect to database
 $mysqli = new mysqli("localhost", "2112247", "SRIAKAAL96k!", "db2112247");
-
 if ($mysqli->connect_errno) {
     echo "Failed to connect: " . $mysqli->connect_error;
     exit();
 }
 
-// Search logic
-$searchTitle = "";
+// Build SQL query
 $sql = "SELECT * FROM movies";
 
+// Check if search submitted
+$searchTitle = "";
 if (isset($_POST['searchTitle']) && !empty($_POST['searchTitle'])) {
     $searchTitle = $mysqli->real_escape_string($_POST['searchTitle']);
     $sql .= " WHERE Movie_name LIKE '%$searchTitle%'";
@@ -51,12 +51,11 @@ if (!$result) {
 
     <h1>Movies List</h1>
 
-    <form method="post" action="task2.php" class="mb-3">
-        <div class="mb-3">
-            <label for="searchTitle" class="form-label">Search by title:</label>
-            <input type="text" name="searchTitle" id="searchTitle" class="form-control" value="<?php echo htmlspecialchars($searchTitle); ?>">
-        </div>
-        <button type="submit" class="btn btn-primary">Search</button>
+    <!-- Search form -->
+    <form method="post" class="mb-3">
+        <label for="searchTitle">Search by title:</label>
+        <input type="text" name="searchTitle" id="searchTitle" value="<?php echo htmlspecialchars($searchTitle); ?>" class="form-control" placeholder="Enter movie title">
+        <button type="submit" class="btn btn-primary mt-2">Search</button>
     </form>
 
     <table class="table table-striped">
@@ -76,9 +75,6 @@ while ($row = $result->fetch_assoc()) {
 }
 ?>
     </table>
-
-    <a href="changestyle.php" class="btn btn-secondary mt-3">Change Style (Cookie)</a>
-
 </div>
 </body>
 </html>
