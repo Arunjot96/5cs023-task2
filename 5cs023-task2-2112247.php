@@ -65,7 +65,11 @@ if (!$result) {
 <div class="container">
   <p><strong>Visits this session:</strong> <?= $_SESSION['visits'] ?></p>
 
+  <!-- ADD MOVIE BUTTON -->
+  <a href="add.php" class="btn btn-success mb-3">Add New Movie</a>
+
   <h1>Movies List</h1>
+
 
   <form method="post" class="mb-4">
     <div class="mb-3">
